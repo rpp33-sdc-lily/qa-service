@@ -1,0 +1,27 @@
+{
+  "dependencies": {
+    "express": "^4.17.3"
+  },
+  "name": "qa-service",
+  "description": "Questions and Answers Server",
+  "version": "1.0.0",
+  "main": "server/index.js",
+  "directories": {
+    "test": "test"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rpp33-sdc-lily/qa-service.git"
+  },
+  "author": "Chloe Meinshausen",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rpp33-sdc-lily/qa-service/issues"
+  },
+  "homepage": "https://github.com/rpp33-sdc-lily/qa-service#readme"
+}

@@ -96,9 +96,9 @@ describe('test update answers as helpful', function() {
   //PUT /qa/questions/:question_id/helpful
   test('Happy Path: put update question helpfulness', async() => {
     await supertest(server).put('/qa/questions/64626/helpful')
-    .expect(200)
+    .expect(204)
     .then((response) => {
-      expect(response.text).toEqual('question 64626 helpfulness updated');
+      expect(response.text).toEqual('');
     });
   });
 
@@ -115,9 +115,9 @@ describe('test update answers as helpful', function() {
  //PUT /qa/answers/:answer_id/helpful
  test('Happy Path: put update answer helpfulness', async() => {
    await supertest(server).put('/qa/answers/745/helpful')
-   .expect(200)
+   .expect(204)
    .then((response) => {
-     expect(response.text).toEqual('answer 745 helpfulness updated');
+     expect(response.text).toEqual('');
    });
  });
 });
@@ -136,9 +136,9 @@ describe('test update answers as helpful', function() {
   //PUT /qa/answers/:answer_id/helpful
   test('Happy Path: report question', async() => {
     await supertest(server).put('/qa/questions/64626/report')
-    .expect(200)
+    .expect(204)
     .then((response) => {
-      expect(response.text).toEqual('question 64626 reported');
+      expect(response.text).toEqual('');
     });
   });
 
@@ -156,22 +156,35 @@ describe('test update answers as helpful', function() {
   //PUT /qa/answers/:answer_id/helpful
   test('Happy Path: report answer', async() => {
     await supertest(server).put('/qa/answers/745/report')
-    .expect(200)
+    .expect(204)
     .then((response) => {
-      expect(response.text).toEqual('answer 745 reported');
+      expect(response.text).toEqual('');
     });
   });
 
 
-
-
-
-
-
-
-
  });
+ describe('insert a new answer', function() {
+   //SAD
+   //POST /qa/questions/:question_id/answers
+  test('Sad Path: insert a new answer', async() => {
+    await supertest(server).post('/qa/questions/answers')
+    .expect(404)
+    .then((response) => {
+      expect(response.text).toEqual('malformed query please use format /qa/questions/question_id/answers');
+    });
+  });
+  //HAPPY
+  //POST /qa/questions/:question_id/answers
+  test('Happy Path: insert an answer', async() => {
+    await supertest(server).post('/qa/questions/64626/answers')
+    .expect(201)
+    .then((response) => {
+      expect(response.text).toEqual('');
+    });
+  });
 
+});
 
 
 });

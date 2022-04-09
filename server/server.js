@@ -15,7 +15,6 @@ app.get('/qa/questions/', (req, res) => {
   console.log('product_id = ', product_id);
   product_id ?  res.status(200).send('Here are your questions') : res.status(404).send('Missing query param product_id  please use format ?product_id=product_id');
 });
-
 /*must check for page and count params eventually*/
 // app.get('/qa/questions/:product_id?/answers/', async function (req, res){
 //   let product_id = req.params.product_id;
@@ -32,36 +31,45 @@ app.get('/qa/questions/:question_id?/answers/', async function (req, res){
   // console.log(req.params)
   question_id ? res.status(200).send(`query.params`) : res.status(404).send('malformed query please use format /qa/questions/:question_id/answers/');
 });
+   //POST /qa/questions/:question_id/answers
+app.post('/qa/questions/:question_id?/answers/', async function (req, res){
+let question_id = req.params.question_id;
+// console.log('GET ID', question_id);
+// console.log(req.query)
+// console.log(req.params)//change to NO CONTENT EVENTUALLY
+question_id ? res.status(201).send('') : res.status(404).send('malformed query please use format /qa/questions/question_id/answers');
+});
 
 app.put('/qa/questions/:question_id?/helpful/', async function (req, res){
   let question_id = req.params.question_id;
   // console.log('GET ID', question_id);
   // console.log(req.query)
-  // console.log(req.params)
-  question_id ? res.status(200).send(`question ${question_id} helpfulness updated`) : res.status(404).send('malformed query please use format /qa/questions/:question_id/answers/');
+  // console.log(req.params)//change to NO CONTENT EVENTUALLY
+  question_id ? res.status(204).send('') : res.status(404).send('malformed query please use format /qa/questions/:question_id/answers/');
 });
 app.put('/qa/questions/:question_id?/report', async function (req, res){
   let question_id = req.params.question_id;
-  console.log('report question', question_id);
-  console.log(req.query)
-  console.log(req.params)
-  question_id ? res.status(200).send(`question ${question_id} reported`) : res.status(404).send('malformed query please use format /qa/questions/:question_id/report');
+  // console.log('report question', question_id);
+  // console.log(req.query)
+  // console.log(req.params)//change to NO CONTENT EVENTUALLY
+  question_id ? res.status(204).send(`question ${question_id} reported`) : res.status(404).send('malformed query please use format /qa/questions/:question_id/report');
 });
 
 app.put('/qa/answers/:answer_id?/helpful', async function (req, res){
   let answer_id = req.params.answer_id;
-  console.log('GET ID', answer_id);
-  console.log(req.query)
-  console.log(req.params)
-  answer_id ? res.status(200).send(`answer ${answer_id} helpfulness updated`) : res.status(404).send('malformed query please use format /qa/answers/:answer_id/helpful');
+  // console.log('GET ID', answer_id);
+  // console.log(req.query)
+  // console.log(req.params)//change to NO CONTENT EVENTUALLY
+  answer_id ? res.status(204).send(`answer ${answer_id} helpfulness updated`) : res.status(404).send('malformed query please use format /qa/answers/:answer_id/helpful');
 });
 app.put('/qa/answers/:answer_id?/report', async function (req, res){
   let answer_id = req.params.answer_id;
-  console.log('report answer', answer_id);
-  console.log(req.query)
-  console.log(req.params)
-  answer_id ? res.status(200).send(`answer ${answer_id} reported`) : res.status(404).send('malformed query please use format /qa/answers/:answer_id/report');
+  // console.log('report answer', answer_id);
+  // console.log(req.query)
+  // console.log(req.params)//change to NO CONTENT EVENTUALLY
+  answer_id ? res.status(204).send('') : res.status(404).send('malformed query please use format /qa/answers/:answer_id/report');
 });
+
 
 
 

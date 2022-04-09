@@ -30,6 +30,7 @@ describe('test server API', function() {
 //     })
 //   });
 
+
 //GET qa/questions route
 describe('test qa/questions route', function() {
   test('GET /qa/questions without the required param', async() => {
@@ -49,19 +50,86 @@ describe('test qa/questions route', function() {
 });
 // should also test with page and count later
 
+describe('test GET answers route route', function() {
 
-test('GET /qa/questions/:64626/answers/', async() => {
-  await supertest(server).get('/qa/questions/:64626/answers/')
-  .expect(200)
-  .then((response) => {
-    expect(response.text).toEqual('req.params');
+   //SAD
+    ///qa/questions/:64626/answers/
+    test('GET answers without required param', async() => {
+    await supertest(server).get('/qa/questions/answers/')
+    .expect(404)
+    .then((response) => {
+      expect(response.text).toEqual('malformed query please use format /qa/questions/:question_id/answers/');
+    });
   });
-});
+  //HAPPY
+  test('GET answers with required param', async() => {
+    await supertest(server).get('/qa/questions/:64626/answers/')
+    .expect(200)
+    .then((response) => {
+      expect(response.text).toEqual('query.params');
+    });
+  });
+
+
+
+
+  });
+
+// PUT /qa/questions/:question_id/helpful
+// PUT /qa/questions/:question_id/report
+
+// PUT /qa/answers/:answer_id/helpful
+// PUT /qa/answers/:answer_id/report
+describe('test update answers as helpful or report route', function() {
+
+
+   //SAD
+   //PUT /qa/questions/:question_id/helpful
+   test('Sad Path: Put question answer helpfulness without query param', async() => {
+    await supertest(server).put('/qa/answers/helpful')
+    .expect(404)
+    .then((response) => {
+      expect(response.text).toEqual('malformed query please use format /qa/answers/:answer_id/helpful');
+    });
+  });
+  //HAPPY
+  //PUT /qa/questions/:question_id/helpful
+  test('Happy Path: put update question helpfulness', async() => {
+    await supertest(server).put('/qa/questions/64626/helpful')
+    .expect(200)
+    .then((response) => {
+      expect(response.text).toEqual('question 64626 helpfulness updated');
+    });
+  });
+
+  //SAD
+   ///qa/questions/:64626/answers/
+   test('Sad Path: Put update answer helpfulness without query param', async() => {
+   await supertest(server).put('/qa/answers/helpful')
+   .expect(404)
+   .then((response) => {
+     expect(response.text).toEqual('malformed query please use format /qa/answers/:answer_id/helpful');
+   });
+ });
+ //HAPPY
+ test('Happy Path: put update answer helpfulness', async() => {
+   await supertest(server).put('/qa/answers/745/helpful')
+   .expect(200)
+   .then((response) => {
+     expect(response.text).toEqual('answer 745 helpfulness updated');
+   });
+ });
+
+
+
+
+
+
+ });
 
 
 
 });
-
 
 // Parameter Type Description
 // body text Text of question being asked

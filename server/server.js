@@ -7,7 +7,8 @@ app.get('/', (req, res) => {
 });
 
 /*must check for page and count params eventually*/
-app.get('qa/questions', (req, res) => {
+app.get('/qa/questions', (req, res) => {
+  console.log('did this run');
   res.status(200).send('hello, I have all your questions!');
 });
 

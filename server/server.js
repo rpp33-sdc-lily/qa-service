@@ -9,19 +9,21 @@ app.get('/', (req, res) => {
 //GET /qa/questions/:question_id/answers
 // GET qa/questions/
 app.get('/qa/questions/', (req, res) => {
-  console.log('GET ANSWERS', req);
-
   let product_id = req.query.product_id;
   let page = req.query.page ? req.query.page : 1;
   let count =  req.query.count ? req.query.count : 5;
-
-  product_id ?  res.status(200).send('hello, answers') :  res.status(200).send('hello, I have all your questions!');
+  console.log('product_id = ', product_id);
+  product_id ?  res.status(200).send('Here are your questions') : res.status(404).send('Missing query param product_id  please use format ?product_id=product_id');
 });
+
 /*must check for page and count params eventually*/
-// app.get('/qa/questions/', (req, res) => {
-//   console.log('GET QUESTIONS', req);
-//   res.status(200).send('hello, I have all your questions!');
-// });
+app.get('/qa/questions/:product_id/answers/', async function (req, res){
+  let product_id = req.params.id;
+  console.log('GET QUESTIONS');
+  console.log('GET ID', product_id);
+
+  res.status(200).send('req.params');
+});
 
 
 

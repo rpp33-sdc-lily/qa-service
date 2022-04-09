@@ -31,21 +31,33 @@ describe('test server API', function() {
 //   });
 
 //GET qa/questions route
-test('GET /qa/questions', async() => {
-  await supertest(server).get('/qa/questions')
+describe('test qa/questions route', function() {
+  test('GET /qa/questions without the required param', async() => {
+    await supertest(server).get('/qa/questions')
+    .expect(404)
+    .then((response) => {
+      expect(response.text).toEqual('Missing query param product_id  please use format ?product_id=product_id');
+    });
+  });
+  test('GET /qa/questions?product_id=545332 with required param', async() => {
+    await supertest(server).get('/qa/questions?product_id=545332')
+    .expect(200)
+    .then((response) => {
+      expect(response.text).toEqual('Here are your questions');
+    });
+  });
+});
+// should also test with page and count later
+
+
+test('GET /qa/questions/:64626/answers/', async() => {
+  await supertest(server).get('/qa/questions/:64626/answers/')
   .expect(200)
   .then((response) => {
-    expect(response.text).toEqual('hello, I have all your questions!');
-  })
+    expect(response.text).toEqual('req.params');
+  });
 });
-//GET qa/questions route
-test('GET /qa/answers', async() => {
-  await supertest(server).get('/qa/questions?product_id=545332')
-  .expect(200)
-  .then((response) => {
-    expect(response.text).toEqual('hello, answers');
-  })
-});
+
 
 
 });

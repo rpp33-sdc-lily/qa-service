@@ -80,7 +80,7 @@ describe('test GET answers route route', function() {
 
 // PUT /qa/answers/:answer_id/helpful
 // PUT /qa/answers/:answer_id/report
-describe('test update answers as helpful or report route', function() {
+describe('test update answers as helpful', function() {
 
 
    //SAD
@@ -103,8 +103,8 @@ describe('test update answers as helpful or report route', function() {
   });
 
   //SAD
-   ///qa/questions/:64626/answers/
-   test('Sad Path: Put update answer helpfulness without query param', async() => {
+  // PUT /qa/answers/:answer_id/helpful
+  test('Sad Path: Put update answer helpfulness without query param', async() => {
    await supertest(server).put('/qa/answers/helpful')
    .expect(404)
    .then((response) => {
@@ -112,6 +112,7 @@ describe('test update answers as helpful or report route', function() {
    });
  });
  //HAPPY
+ //PUT /qa/answers/:answer_id/helpful
  test('Happy Path: put update answer helpfulness', async() => {
    await supertest(server).put('/qa/answers/745/helpful')
    .expect(200)
@@ -119,6 +120,50 @@ describe('test update answers as helpful or report route', function() {
      expect(response.text).toEqual('answer 745 helpfulness updated');
    });
  });
+});
+ describe('test report question or answer', function() {
+
+//SAD
+  // PUT /qa/answers/:answer_id/report
+  test('Sad Path: Put  report question without query param', async() => {
+    await supertest(server).put('/qa/questions/report')
+    .expect(404)
+    .then((response) => {
+      expect(response.text).toEqual('malformed query please use format /qa/questions/:question_id/report');
+    });
+  });
+  //HAPPY
+  //PUT /qa/answers/:answer_id/helpful
+  test('Happy Path: report question', async() => {
+    await supertest(server).put('/qa/questions/64626/report')
+    .expect(200)
+    .then((response) => {
+      expect(response.text).toEqual('question 64626 reported');
+    });
+  });
+
+
+ //SAD
+  // PUT /qa/answers/:answer_id/report
+  test('Sad Path: Put update report answer without query param', async() => {
+    await supertest(server).put('/qa/answers/report')
+    .expect(404)
+    .then((response) => {
+      expect(response.text).toEqual('malformed query please use format /qa/answers/:answer_id/report');
+    });
+  });
+  //HAPPY
+  //PUT /qa/answers/:answer_id/helpful
+  test('Happy Path: report answer', async() => {
+    await supertest(server).put('/qa/answers/745/report')
+    .expect(200)
+    .then((response) => {
+      expect(response.text).toEqual('answer 745 reported');
+    });
+  });
+
+
+
 
 
 

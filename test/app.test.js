@@ -1,4 +1,4 @@
-g// const server = require('./server/server');
+// const server = require('./server/server');
 const supertest = require('supertest');
 // const app = require('./server/index.js');
 
@@ -21,9 +21,9 @@ describe('test server API', function() {
       expect(response.text).toEqual('hello, FEC');
     })
   });
-// //POST qa/questions route
-//   test('POST qa/questions route', async() => {
-//     await supertest(server).get('/')
+// // //POST qa/questions route
+//   test('POST /qa/questions route', async() => {
+//     await supertest(server).post('/qa/questions')
 //     .expect(200)
 //     .then((response) => {
 //       expect(response.text).toEqual('hello, FEC');
@@ -36,6 +36,14 @@ test('GET /qa/questions', async() => {
   .expect(200)
   .then((response) => {
     expect(response.text).toEqual('hello, I have all your questions!');
+  })
+});
+//GET qa/questions route
+test('GET /qa/answers', async() => {
+  await supertest(server).get('/qa/questions?product_id=545332')
+  .expect(200)
+  .then((response) => {
+    expect(response.text).toEqual('hello, answers');
   })
 });
 

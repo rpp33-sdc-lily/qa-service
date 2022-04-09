@@ -4,20 +4,28 @@ const port = 3000;
 
 app.get('/', (req, res) => {
   res.status(200).send('hello, FEC');
-});
 
-/*must check for page and count params eventually*/
-app.get('/qa/questions', (req, res) => {
-  console.log('did this run');
-  res.status(200).send('hello, I have all your questions!');
 });
-
 //GET /qa/questions/:question_id/answers
-app.get('qa/questions:question_id/answers', (req, res) => {
-  res.status(200).send('hello, answers');
-});
+// GET qa/questions/
+app.get('/qa/questions/', (req, res) => {
+  console.log('GET ANSWERS', req);
 
-// GET qa/answers
+  let product_id = req.query.product_id;
+  let page = req.query.page ? req.query.page : 1;
+  let count =  req.query.count ? req.query.count : 5;
+
+  product_id ?  res.status(200).send('hello, answers') :  res.status(200).send('hello, I have all your questions!');
+});
+/*must check for page and count params eventually*/
+// app.get('/qa/questions/', (req, res) => {
+//   console.log('GET QUESTIONS', req);
+//   res.status(200).send('hello, I have all your questions!');
+// });
+
+
+
+
 // POST /qa/questions/:question_id/answers route
 // POST /qa/questions
 // PUT /qa/questions/:question_id/helpful

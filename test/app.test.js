@@ -171,18 +171,39 @@ describe('test update answers as helpful', function() {
     await supertest(server).post('/qa/questions/answers')
     .expect(404)
     .then((response) => {
-      expect(response.text).toEqual('malformed query please use format /qa/questions/question_id/answers');
+      expect(response.text).toEqual('malformed query. query requires, body, name and email');
     });
   });
   //HAPPY
   //POST /qa/questions/:question_id/answers
   test('Happy Path: insert an answer', async() => {
-    await supertest(server).post('/qa/questions/64626/answers')
+    await supertest(server).post('/qa/questions/64626/answers?name=arie&email=babynews@gmail.com&body=SunnySkies')
     .expect(201)
     .then((response) => {
       expect(response.text).toEqual('');
     });
   });
+
+});
+describe('insert a new question', function() {
+  //SAD
+  //POST /qa/questions/
+ test('Sad Path: insert a new Question', async() => {
+   await supertest(server).post('/qa/questions/')
+   .expect(404)
+   .then((response) => {
+     expect(response.text).toEqual('malformed query. query requires, body, name and email');
+   });
+ });
+ //HAPPY
+ //POST /qa/questions/:question_id/answers
+ test('Happy Path: insert an answer', async() => {
+   await supertest(server).post('/qa/questions/?product_id=64626&name=arie&email=babynews@gmail.com&body=ThunderStorm')
+   .expect(201)
+   .then((response) => {
+     expect(response.text).toEqual('');
+   });
+ });
 
 });
 

@@ -1,5 +1,11 @@
-const postgres = require('postgres');
-const sql = postgres({...options});
-
-await sql
-  select name, age, from users;
+const Pool = require('pg').Pool
+const pool = new Pool({
+  user: 'chloe',
+  host: 'localhost',
+  database: 'qatestdb',
+  password: 'password',
+  port: 5432,
+})
+module.exports = {
+  pool,
+}

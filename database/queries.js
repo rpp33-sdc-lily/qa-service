@@ -1,12 +1,5 @@
-const Pool = require('pg').Pool
-const pool = new Pool({
-  user: 'chloe',
-  host: 'localhost',
-  database: 'qatestdb',
-  password: 'password',
-  port: 5432,
-})
 
+const pool = require('./index.js');
 
 const getAnswers = (req, res) => {
   pool.query('SELECT * from answers', (error, results) => {

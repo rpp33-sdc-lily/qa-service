@@ -1,10 +1,18 @@
 const express = require('express');
 const app = express();
 const port = 3000;
+const bodyParser = require('body-parser');
 
+app.use(bodyParser.json())
+app.use(
+  bodyParser.urlencoded({
+  extended: true,
+  })
+);
 app.get('/', (req, res) => {
-  res.status(200).send('hello, FEC');
+  // res.status(200).send('hello, FEC');
 
+  res.json({'info': 'Node.js, Express, and Postgres API'});
 });
 //GET /qa/questions/:question_id/answers
 // GET qa/questions/

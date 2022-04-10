@@ -13,7 +13,6 @@ describe('test server API', function() {
     // server.close();
   });
 
-
   test('GET /posts', async() => {
     await supertest(server).get('/')
     .expect(200)
@@ -21,15 +20,6 @@ describe('test server API', function() {
       expect(response.text).toEqual('hello, FEC');
     })
   });
-// // //POST qa/questions route
-//   test('POST /qa/questions route', async() => {
-//     await supertest(server).post('/qa/questions')
-//     .expect(200)
-//     .then((response) => {
-//       expect(response.text).toEqual('hello, FEC');
-//     })
-//   });
-
 
 //GET qa/questions route
 describe('test qa/questions route', function() {
@@ -75,17 +65,12 @@ describe('test GET answers route route', function() {
 
   });
 
-// PUT /qa/questions/:question_id/helpful
-// PUT /qa/questions/:question_id/report
 
-// PUT /qa/answers/:answer_id/helpful
-// PUT /qa/answers/:answer_id/report
 describe('test update answers as helpful', function() {
-
 
    //SAD
    //PUT /qa/questions/:question_id/helpful
-   test('Sad Path: Put question answer helpfulness without query param', async() => {
+  test('Sad Path: Put question answer helpfulness without query param', async() => {
     await supertest(server).put('/qa/answers/helpful')
     .expect(404)
     .then((response) => {

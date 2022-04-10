@@ -13,11 +13,14 @@ describe('test server API', function() {
     // server.close();
   });
 
-  test('GET /posts', async() => {
+  test.only('GET /posts', async() => {
     await supertest(server).get('/')
     .expect(200)
     .then((response) => {
-      expect(response.text).toEqual('hello, FEC');
+
+      expect(response.text).toEqual("{\"info\":\"Node.js, Express, and Postgres API\"}");
+      expect(response.type).toEqual('application/json');
+
     })
   });
 

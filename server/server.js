@@ -3,7 +3,6 @@ const app = express();
 const port = 3000;
 const bodyParser = require('body-parser');
 const db = require('../database/queries.js');
-
 app.use(bodyParser.json())
 app.use(
   bodyParser.urlencoded({
@@ -75,10 +74,7 @@ app.put('/qa/answers/:answer_id?/helpful', async function (req, res){
   answer_id ? res.status(204).send('') : res.status(404).send('malformed query please use format /qa/answers/:answer_id/helpful');
 });
 
-app.put('/qa/answers/:answer_id?/report', async function (req, res){
-  let answer_id = req.params.answer_id;
-  answer_id ? res.status(204).send('') : res.status(404).send('malformed query please use format /qa/answers/:answer_id/report');
-});
+app.put('/qa/answers/:answer_id?/report', db.reportAnswer);
 
 
 

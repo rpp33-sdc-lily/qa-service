@@ -5,6 +5,8 @@ const supertest = require('supertest');
 describe('test server API', function() {
 
   var server;
+  const query = require('../database/index.js')
+  const pool =  require('../database/index.js')
 
   beforeEach(function(){
     server = require('../server/server.js');
@@ -12,8 +14,15 @@ describe('test server API', function() {
   afterEach(function () {
     // server.close();
   });
+  beforeAll(() => {
 
-  test.only('GET /posts', async() => {
+  })
+  afterAll(() => {
+    query.close();
+    console.log('afterALL ', query);
+  })
+
+  test('GET /posts', async() => {
     await supertest(server).get('/')
     .expect(200)
     .then((response) => {
@@ -102,7 +111,7 @@ describe('test update answers as helpful', function() {
  //HAPPY
  //PUT /qa/answers/:answer_id/helpful
  test('Happy Path: put update answer helpfulness', async() => {
-   await supertest(server).put('/qa/answers/745/helpful')
+   await supertest(server).put('/qa/answers/699/helpful')
    .expect(204)
    .then((response) => {
      expect(response.text).toEqual('');
@@ -142,12 +151,25 @@ describe('test update answers as helpful', function() {
   });
   //HAPPY
   //PUT /qa/answers/:answer_id/helpful
-  test('Happy Path: report answer', async() => {
-    await supertest(server).put('/qa/answers/745/report')
+  test.only('Happy Path: report answer', async() => {
+    await supertest(server).put('/qa/answers/699/report')
     .expect(204)
     .then((response) => {
       expect(response.text).toEqual('');
-    });
+    }).then(() => {
+      pool.query('SELECT * FROM answers WHERE id = $1', [699])})
+      .then((response) => {
+        console.log('response->', response);
+       // expect(response.rows.reported).toEqual(true);
+      })
+      .then(() => {
+        pool.query('UPDATE answers set reported = false WHERE id = $1', [699])
+        .then(response => {
+          console.log('resp2', response);
+        })
+      })
+
+
   });
 
 

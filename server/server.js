@@ -11,18 +11,32 @@ app.use(
 );
 app.get('/', (req, res) => {
   // res.status(200).send('hello, FEC');
-
+  console.log('/ response')
   res.json({'info': 'Node.js, Express, and Postgres API'});
 });
 //GET /qa/questions/:question_id/answers
 // GET qa/questions/
-app.get('/qa/questions/', (req, res) => {
-  let product_id = req.query.product_id;
-  let page = req.query.page ? req.query.page : 1;
-  let count =  req.query.count ? req.query.count : 5;
-  console.log('product_id = ', product_id);
-  product_id ?  res.status(200).send('Here are your questions') : res.status(404).send('Missing query param product_id  please use format ?product_id=product_id');
-});
+// app.get('/qa/questions/', db.getQuestions);
+app.get('/qa/questions/', ((req, res) => {
+
+
+  db.getQuestions(req,res,(err,resp)=>{
+    if(err) {
+      console.log(err, err);
+    }
+    console.log('response sent from server: ',resp);
+    res.status(200).json({'product_id':req.query.product_id,'results':resp});
+  })
+  // .then(resp => {
+
+  // })
+  // .catch(err => {
+  //   // throw err;
+  //   console.log('there must be an error somewhere', err)
+  //  // res.status(500).send('error');
+  // })
+  }))
+
 
 
    //POST /qa/questions/:question_id/answers
@@ -41,8 +55,27 @@ app.post('/qa/questions/', async function (req, res){
 });
 
 app.get('/qa/questions/:question_id?/answers/', async function (req, res){
-  let question_id = req.params.question_id;
-  question_id ? res.status(200).send(`query.params`) : res.status(404).send('malformed query please use format /qa/questions/:question_id/answers/');
+  // let question_id = req.params.question_id;
+  // question_id ? res.status(200).send(`query.params`) : res.status(404).send('malformed query please use format /qa/questions/:question_id/answers/');
+  let page = req.query.page ? req.query.page : 1;
+  let count =  req.query.count ? req.query.count : 5;
+  db.getAnswers(req,res,(err,response)=>{
+    if(err) {
+      console.log(err, err);
+      res.status(500).send('internal error')
+    } else {
+      console.log('response ', response)
+      if (response.length === 0 ) {
+        res.status(404).send('id does not exist in table');
+      } else {
+        console.log('response sent from server ANSWERS', response);
+        res.status(200).json({'question_id': req.params.question_id, 'count': count, 'page': page, 'results':response});
+      }
+    // console.log('r',resp);
+    // res.status(200).json({'question_id':req.query.product_id,'results':resp});
+
+    }
+  })
 });
    //POST /qa/questions/:question_id/answers
 app.post('/qa/questions/:question_id?/answers/', async function (req, res){

@@ -16,8 +16,8 @@
     "supertest": "^6.2.2"
   },
   "scripts": {
-    "test": "jest",
-    "start": "nodemon server/index.js"
+    "test": "jest && export MODE=development",
+    "start": "nodemon server/index.js && export MODE=production"
   },
   "repository": {
     "type": "git",

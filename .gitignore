@@ -1,2 +1,6 @@
 node_modules
 *.csv
+*.env
+*.config
+
+project-atelier/

@@ -1,16 +1,12 @@
-
 const query = require('./index.js').query;
 const pool = require('./index.js');
 
 const getQuestions = (req, res, callback) => {
   let product_id = req.query.product_id;
-  console.log('product_id = ', product_id);
-  // product_id = 64627 ? 5: product_id;
-  console.log('product_id = ', product_id);
 
   let page = req.query.page ? req.query.page : 1;
   let count =  req.query.count ? req.query.count : 5;
-  // console.log('product_id = ', product_id);
+
   if (product_id) {
     pool.query(`WITH question_ids AS (
       SELECT *

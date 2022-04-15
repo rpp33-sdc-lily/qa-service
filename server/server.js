@@ -27,14 +27,6 @@ app.get('/qa/questions/', ((req, res) => {
     console.log('response sent from server: ',resp);
     res.status(200).json({'product_id':req.query.product_id,'results':resp});
   })
-  // .then(resp => {
-
-  // })
-  // .catch(err => {
-  //   // throw err;
-  //   console.log('there must be an error somewhere', err)
-  //  // res.status(500).send('error');
-  // })
   }))
 
 
@@ -55,8 +47,7 @@ app.post('/qa/questions/', async function (req, res){
 });
 
 app.get('/qa/questions/:question_id?/answers/', async function (req, res){
-  // let question_id = req.params.question_id;
-  // question_id ? res.status(200).send(`query.params`) : res.status(404).send('malformed query please use format /qa/questions/:question_id/answers/');
+
   let page = req.query.page ? req.query.page : 1;
   let count =  req.query.count ? req.query.count : 5;
   db.getAnswers(req,res,(err,response)=>{
@@ -71,9 +62,6 @@ app.get('/qa/questions/:question_id?/answers/', async function (req, res){
         console.log('response sent from server ANSWERS', response);
         res.status(200).json({'question_id': req.params.question_id, 'count': count, 'page': page, 'results':response});
       }
-    // console.log('r',resp);
-    // res.status(200).json({'question_id':req.query.product_id,'results':resp});
-
     }
   })
 });

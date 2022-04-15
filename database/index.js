@@ -1,10 +1,13 @@
 const Pool = require('pg').Pool
+console.log('in ', process.env.NODE_ENV, ' mode');
+var db = process.env.NODE_ENV === 'production' ? 'qa' : 'qatestdb';
+console.log('db selected: ', db);
 
 const pool = new Pool({
-  user: 'chloe',
+  user: 'postgres',
   host: 'localhost',
-  database: process.env.MODE = 'testing' ? 'qatestdb' : 'qa',
-  password: 'password',
+  database: db,
+  password: 'telemann',
   port: 5432,
 });
 

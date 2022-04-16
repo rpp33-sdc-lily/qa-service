@@ -77,11 +77,19 @@ app.post('/qa/questions/:question_id?/answers/', async function (req, res){
   let name = req.query.name;
   let email = req.query.email;
   let photos = req.query.photos;
- 
+
   if ( body === undefined || name === undefined || email === undefined) {
     res.status(404).send('malformed query. query requires, body, name and email');
+  } else {
+    db.insertAnswer(req, res, (err, response) => {
+      if(err) {
+        res.status(500).send('server error');
+      }
+      console.log('response sent from server: ',response);
+      res.status(201).send('');
+    });
   }
-  question_id && parametersPresent ? res.status(201).send('') :
+
 });
 
 app.put('/qa/questions/:question_id?/helpful/', async function (req, res){

@@ -207,7 +207,7 @@ describe('test update answers as helpful', function() {
 
 
  });
- describe('insert a new answer', function() {
+ describe.only('insert a new answer', function() {
    //SAD
    //POST /qa/questions/:question_id/answers
   test('Sad Path: insert a new answer', async() => {
@@ -220,15 +220,22 @@ describe('test update answers as helpful', function() {
   //HAPPY
   //POST /qa/questions/:question_id/answers
   test('Happy Path: insert an answer', async() => {
-    await supertest(server).post('/qa/questions/64626/answers?name=arie&email=babynews@gmail.com&body=SunnySkies')
+    await supertest(server).post('/qa/questions/109/answers?name=arie&email=babynews@gmail.com&body=SunnySkies')
     .expect(201)
     .then((response) => {
       expect(response.text).toEqual('');
-    });
+    })
+    .then(()=> {
+      return pool.query('SELECT * FROM answers WHERE question_id = $1',[109])
+      .then(response => {
+       expect(response.rows.length).toEqual(5);
+      })
+     })
+
   });
 
 });
-describe.only('insert a new question', function() {
+describe('insert a new question', function() {
   //SAD
   //POST /qa/questions/
  test('Sad Path: insert a new Question', async() => {
@@ -244,7 +251,6 @@ describe.only('insert a new question', function() {
    await supertest(server).post('/qa/questions/?product_id=111&name=arie&email=babynews@gmail.com&body=ThunderStorm')
    .expect(201)
    .then((response) => {
-    console.log("HELLO")
      expect(response.text).toEqual('');
    }).then(()=> {
     return pool.query('SELECT * FROM questions WHERE product_id = $1',[111])

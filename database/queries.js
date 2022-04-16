@@ -139,8 +139,6 @@ const insertQuestion = (req, res, callback) => {
         console.log('err', err);
         throw err;
       })
-    
-      // res.status(200).send('sad')
 
   } else {
     res.status(404).send('Missing query param product_id  please use format ?product_id=product_id');
@@ -150,40 +148,18 @@ const insertQuestion = (req, res, callback) => {
 }
 const insertAnswer = (req, res,callback) => {
   let question_id = req.params.question_id;
+  let body = req.query.body;
+  let name = req.query.name;
+  let email = req.query.email;
+  let photos = req.query.photos;
+
   if (question_id) {
-    pool.query(`WITH
-    answer_ids as (
-      SELECT  a.id as aid, a.question_id, a.body, a.answer_date, a.helpful, a.reported, a.answerer_name
-      FROM  answers as a
-            WHERE a.question_id = $1
-    ), photo_ids as (
-            SELECT  p.id as photo_id, p.answer_id, a.question_id as qid, p.url
-      FROM answer_ids as a
-       INNER JOIN photos as p
-       ON p.answer_id = aid
-    )  SELECT *
-    FROM (
-            SELECT
-                 a.question_id,
-                 a.aid as answer_id,
-                      a.body as body,
-                 a.answer_date as date,
-                     a.answerer_name,
-             a.helpful as helpfulness,
-                  CASE WHEN count(p.id)= 0 THEN array_to_json('{}'::int[]) ELSE json_agg(json_build_object('id',p.id,'url',p.url)) END as photos
-            FROM answer_ids as a
-            LEFT JOIN  (
-                    SELECT photo_ids.photo_id as id, photo_ids.answer_id , photo_ids.url as url
-                    FROM answer_ids
-                    JOIN photo_ids
-                    ON photo_ids.answer_id = answer_ids.aid
-
-            ) AS p
-            ON p.answer_id = a.aid
-            GROUP BY p.answer_id, a.question_id, a.aid,a.body, a.answer_date, a.helpful, a.reported, a.answerer_name
-
-    ) AS answer_data
-  `, [question_id])
+    pool.query(` INSERT INTO answers
+    (question_id, body, date_written, answerer_name, answerer_email, reported, helpful, new_id, answer_date)
+    SELECT $1, $2, (EXTRACT(EPOCH FROM Now())::numeric * 1000)::bigint, $3,
+    $4, false,0, CAST(LPAD(TO_HEX(max(id)+1), 32, '0') AS UUID), NOW()
+    from questions;
+  `, [question_id, body, name, email])
       .then(result => {
 
         callback(null, result.rows);

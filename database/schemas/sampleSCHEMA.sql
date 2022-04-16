@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS answers
   UPDATE answers SET new_id = CAST(LPAD(TO_HEX(id), 32, '0') AS UUID);
   ALTER TABLE answers ADD COLUMN answer_date  timestamptz NULL;
   update answers SET answer_date = to_timestamp(date_written/1000);
-  CREATE SEQUENCE a_id_seq MINVALUE 700;
+  CREATE SEQUENCE a_id_seq MINVALUE 701;
   ALTER TABLE answers
   ALTER id SET DEFAULT nextval('a_id_seq');
 
@@ -72,5 +72,5 @@ CREATE TABLE IF NOT EXISTS photos
   ALTER TABLE photos ADD COLUMN new_id UUID NULL;
   UPDATE photos SET new_id = CAST(LPAD(TO_HEX(id), 32, '0') AS UUID);
   CREATE SEQUENCE p_id_seq MINVALUE 202;
-  ALTER TABLE answers
+  ALTER TABLE photos
   ALTER id SET DEFAULT nextval('p_id_seq');

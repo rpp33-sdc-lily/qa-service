@@ -13,7 +13,7 @@ const getQuestions = (req, res, callback) => {
       FROM questions
       WHERE product_id = $1
       ),answer_ids as (
-        SELECT  q.id as qid, a.id as aid, a.question_id, a.body, a.date_written, a.helpful, a.reported
+        SELECT  q.id as qid, a.id as aid, a.question_id, a.body, a.date_written,a.answerer_name, a.helpful, a.reported
         FROM  question_ids as q
               INNER JOIN answers as a
               ON q.id = a.question_id
@@ -22,28 +22,35 @@ const getQuestions = (req, res, callback) => {
         FROM answer_ids as a
          INNER JOIN photos as p
          ON p.answer_id = aid
-      )  SELECT  q.id as question_id, q.body as question_body, q.question_date, q.asker_name, q.helpful as question_helpfulness,q.reported,json_agg(answer_data) as answers
+      )  SELECT  q.id as question_id,
+	  			 q.body as question_body,
+				 q.question_date, q.asker_name,
+				 q.helpful as question_helpfulness,
+				 q.reported,
+				 CASE WHEN count(a.id)= 0 THEN array_to_json('{}'::int[]) ELSE json_agg(json_build_object('id',a.id,'body',a.body, 'date', a.date, 'answerer_name', a.answerer_name, 'helpfulness', a.helpfulness,'photos',a.photos)) END as answers
+
       FROM  question_ids as q
       LEFT JOIN (
               SELECT
                    a.question_id,
                    a.aid as id,
-                        a.body as body,
+                   a.body as body,
                    a.date_written as date,
-               a.helpful as helpfulness,
-                       json_agg(p) as photos
+		  		   a.answerer_name,
+                   a.helpful as helpfulness,
+                   CASE WHEN count(p.id)= 0 THEN array_to_json('{}'::int[]) ELSE json_agg(json_build_object('id',p.id,'url',p.url)) END as photos
               FROM answer_ids as a
               LEFT JOIN  (
-                      SELECT photo_ids.photo_id, photo_ids.answer_id, photo_ids.url
+                      SELECT photo_ids.photo_id as id, photo_ids.answer_id, photo_ids.url
                       FROM answer_ids
                       JOIN photo_ids
                       ON photo_ids.answer_id = answer_ids.aid
               ) AS p
               ON p.answer_id = a.aid
-              GROUP BY p.answer_id, a.question_id, a.aid,a.body, a.date_written, a.helpful, a.reported
-      ) AS answer_data
-      ON q.id = answer_data.question_id
-      GROUP BY answer_data.question_id, q.id, q.body, q.question_date, q.asker_name, q.helpful,q.reported;`, [product_id])
+              GROUP BY p.answer_id, a.question_id, a.aid,a.body, a.date_written, a.helpful, a.reported, a.answerer_name
+      ) AS a
+      ON q.id = a.question_id
+      GROUP BY a.question_id, q.id, q.body, q.question_date, q.asker_name, q.helpful,q.reported;`, [product_id])
       .then(result => {
         // console.log('results in query ', result.rows);
         callback(null, result.rows);

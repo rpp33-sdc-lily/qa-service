@@ -17,6 +17,7 @@
   },
   "scripts": {
     "test": "jest && export NODE_ENV=development",
+    "test_coverage": "jest --coverage && export NODE_ENV=development",
     "start": "export NODE_ENV=production&& nodemon server/index.js",
     "start_dev":  "export NODE_ENV=test&& nodemon server/index.js"
   },

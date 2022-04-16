@@ -207,7 +207,7 @@ describe('test update answers as helpful', function() {
 
 
  });
- describe.only('insert a new answer', function() {
+ describe('insert a new answer', function() {
    //SAD
    //POST /qa/questions/:question_id/answers
   test('Sad Path: insert a new answer', async() => {

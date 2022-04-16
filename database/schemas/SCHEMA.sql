@@ -9,6 +9,9 @@
 DROP TABLE IF EXISTS public.questions CASCADE;
 DROP TABLE IF EXISTS public.answers CASCADE;
 DROP TABLE IF EXISTS public.photos  CASCADE;
+DROP SEQUENCE IF EXISTS  q_id_seq CASCADE;
+DROP SEQUENCE IF EXISTS  a_id_seq CASCADE;
+DROP SEQUENCE IF EXISTS  p_id_seq CASCADE;
 
 CREATE TABLE IF NOT EXISTS questions
 (
@@ -30,9 +33,12 @@ CREATE TABLE IF NOT EXISTS questions
      OWNER to postgres;
   ALTER TABLE questions ADD COLUMN question_date  timestamptz NULL;
   update questions SET question_date = to_timestamp(date_written/1000);
+  CREATE SEQUENCE q_id_seq MINVALUE 3518964;
+  ALTER TABLE questions
+  ALTER id SET DEFAULT nextval('q_id_seq');
 --   SELECT MAX(id)+1 FROM questions
 
-
+-- CREATE ANSWERS TABLE
 CREATE TABLE IF NOT EXISTS answers
 (
    id integer NOT NULL,
@@ -52,6 +58,9 @@ CREATE TABLE IF NOT EXISTS answers
   UPDATE answers SET new_id = CAST(LPAD(TO_HEX(id), 32, '0') AS UUID);
   ALTER TABLE answers ADD COLUMN answer_date  timestamptz NULL;
   update answers SET answer_date = to_timestamp(date_written/1000);
+  CREATE SEQUENCE a_id_seq MINVALUE 6879307;
+  ALTER TABLE answers
+  ALTER id SET DEFAULT nextval('a_id_seq');
 
 CREATE TABLE IF NOT EXISTS photos
 (

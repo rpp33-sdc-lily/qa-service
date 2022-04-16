@@ -20,12 +20,12 @@ app.get('/', (req, res) => {
 app.get('/qa/questions/', ((req, res) => {
 
 
-  db.getQuestions(req,res,(err,resp)=>{
+  db.getQuestions(req,res,(err,response)=>{
     if(err) {
       console.log(err, err);
     }
-    console.log('response sent from server: ',resp);
-    res.status(200).json({'product_id':req.query.product_id,'results':resp});
+    console.log('response sent from server: ',response);
+    res.status(200).json({'product_id':req.query.product_id,'results':response});
   })
   }))
 
@@ -38,12 +38,17 @@ app.post('/qa/questions/', async function (req, res){
   let name = req.query.name;
   let email = req.query.email;
 
-  let parametersPresent = true;
   if ( body === undefined || name === undefined || email === undefined) {
-    parametersPresent = false;
+    res.status(404).send('malformed query. query requires, body, name and email');
+  } else {
+    db.insertQuestion(req, res, (err, response) => {
+      if(err) {
+        res.status(500).send('server error');
+      }
+      console.log('response sent from server: ',response);
+      res.status(201).send('');
+    });
   }
-
-  product_id && parametersPresent ? res.status(201).send('') : res.status(404).send('malformed query. query requires, body, name and email');
 });
 
 app.get('/qa/questions/:question_id?/answers/', async function (req, res){
@@ -72,11 +77,11 @@ app.post('/qa/questions/:question_id?/answers/', async function (req, res){
   let name = req.query.name;
   let email = req.query.email;
   let photos = req.query.photos;
-  let parametersPresent = true;
+ 
   if ( body === undefined || name === undefined || email === undefined) {
-    parametersPresent = false;
+    res.status(404).send('malformed query. query requires, body, name and email');
   }
-  question_id && parametersPresent ? res.status(201).send('') : res.status(404).send('malformed query. query requires, body, name and email');
+  question_id && parametersPresent ? res.status(201).send('') :
 });
 
 app.put('/qa/questions/:question_id?/helpful/', async function (req, res){

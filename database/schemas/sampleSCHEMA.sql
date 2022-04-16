@@ -9,6 +9,9 @@
 DROP TABLE IF EXISTS public.questions CASCADE;
 DROP TABLE IF EXISTS public.answers CASCADE;
 DROP TABLE IF EXISTS public.photos  CASCADE;
+DROP SEQUENCE IF EXISTS  q_id_seq CASCADE;
+DROP SEQUENCE IF EXISTS  a_id_seq CASCADE;
+DROP SEQUENCE IF EXISTS  p_id_seq CASCADE;
 
 CREATE TABLE IF NOT EXISTS questions
 (
@@ -22,7 +25,7 @@ CREATE TABLE IF NOT EXISTS questions
     helpful integer,
     CONSTRAINT questions_pkey PRIMARY KEY (id)
 );
-  \COPY questions from '/Users/chloem/RPP33/qa-service/database/sampleQuestions.csv' delimiter ',' csv header;
+  \COPY questions from '/Users/chloem/RPP33/qa-service/database/files/sampleQuestions.csv' delimiter ',' csv header;
 
   ALTER TABLE questions ADD COLUMN new_id UUID NULL;
   UPDATE questions SET new_id = CAST(LPAD(TO_HEX(id), 32, '0') AS UUID);
@@ -30,9 +33,12 @@ CREATE TABLE IF NOT EXISTS questions
      OWNER to postgres;
   ALTER TABLE questions ADD COLUMN question_date  timestamptz NULL;
   update questions SET question_date = to_timestamp(date_written/1000);
+  CREATE SEQUENCE q_id_seq MINVALUE 367;
+  ALTER TABLE questions
+  ALTER id SET DEFAULT nextval('q_id_seq');
 --   SELECT MAX(id)+1 FROM questions
 
-
+--  CREATE ANSWERS TABLE
 CREATE TABLE IF NOT EXISTS answers
 (
    id integer NOT NULL,
@@ -46,12 +52,15 @@ CREATE TABLE IF NOT EXISTS answers
     CONSTRAINT answers_pkey PRIMARY KEY (id)
 );
 
-  \COPY answers from '/Users/chloem/RPP33/qa-service/database/sampleAnswers.csv' delimiter ',' csv header;
+  \COPY answers from '/Users/chloem/RPP33/qa-service/database/files/sampleAnswers.csv' delimiter ',' csv header;
 
   ALTER TABLE answers ADD COLUMN new_id UUID NULL;
   UPDATE answers SET new_id = CAST(LPAD(TO_HEX(id), 32, '0') AS UUID);
   ALTER TABLE answers ADD COLUMN answer_date  timestamptz NULL;
   update answers SET answer_date = to_timestamp(date_written/1000);
+  CREATE SEQUENCE a_id_seq MINVALUE 700;
+  ALTER TABLE answers
+  ALTER id SET DEFAULT nextval('a_id_seq');
 
 CREATE TABLE IF NOT EXISTS photos
 (
@@ -59,6 +68,9 @@ CREATE TABLE IF NOT EXISTS photos
    answer_id integer NOT NULL REFERENCES answers (id),
    url character varying COLLATE pg_catalog."default"
 );
-  \COPY photos from '/Users/chloem/RPP33/qa-service/database/sampleAnswers_photos.csv' delimiter ',' csv header;
+  \COPY photos from '/Users/chloem/RPP33/qa-service/database/files/sampleAnswers_photos.csv' delimiter ',' csv header;
   ALTER TABLE photos ADD COLUMN new_id UUID NULL;
   UPDATE photos SET new_id = CAST(LPAD(TO_HEX(id), 32, '0') AS UUID);
+  CREATE SEQUENCE p_id_seq MINVALUE 202;
+  ALTER TABLE answers
+  ALTER id SET DEFAULT nextval('p_id_seq');

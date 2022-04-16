@@ -10,9 +10,12 @@ describe('test server API', function() {
 
   beforeEach(function(){
     server = require('../server/server.js');
+    return pool.query('START TRANSACTION');
+
   });
   afterEach(function () {
     // server.close();
+    return pool.query('ROLLBACK');
   });
   beforeAll(() => {
 
@@ -34,7 +37,7 @@ describe('test server API', function() {
   });
 
 //GET qa/questions route
-describe.only('test qa/questions route', function() {
+describe('test qa/questions route', function() {
   test('Sad Path: GET /qa/questions without the required param', async() => {
     await supertest(server).get('/qa/questions')
     .expect(404)
@@ -225,7 +228,7 @@ describe('test update answers as helpful', function() {
   });
 
 });
-describe('insert a new question', function() {
+describe.only('insert a new question', function() {
   //SAD
   //POST /qa/questions/
  test('Sad Path: insert a new Question', async() => {
@@ -237,12 +240,19 @@ describe('insert a new question', function() {
  });
  //HAPPY
  //POST /qa/questions/:question_id/answers
- test('Happy Path: insert an answer', async() => {
-   await supertest(server).post('/qa/questions/?product_id=64626&name=arie&email=babynews@gmail.com&body=ThunderStorm')
+ test('Happy Path: insert a question with valid params', async() => {
+   await supertest(server).post('/qa/questions/?product_id=111&name=arie&email=babynews@gmail.com&body=ThunderStorm')
    .expect(201)
    .then((response) => {
+    console.log("HELLO")
      expect(response.text).toEqual('');
-   });
+   }).then(()=> {
+    return pool.query('SELECT * FROM questions WHERE product_id = $1',[111])
+    .then(response => {
+     expect(response.rows.length).toEqual(1);
+    })
+   })
+
  });
 
 });

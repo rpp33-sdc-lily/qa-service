@@ -14,9 +14,16 @@ app.get('/', (req, res) => {
   console.log('/ response')
   res.json({'info': 'Node.js, Express, and Postgres API'});
 });
+app.get('/test', (req, res) => {
+  res.status(200).json('anthing');
+})
 //GET /qa/questions/:question_id/answers
 // GET qa/questions/
 // app.get('/qa/questions/', db.getQuestions);
+
+
+app.get('/info/', db.selectKeysForTable);
+
 app.get('/qa/questions/', ((req, res) => {
 
 
@@ -24,7 +31,7 @@ app.get('/qa/questions/', ((req, res) => {
     if(err) {
       console.log(err, err);
     }
-    console.log('response sent from server: ',response);
+    // console.log('response sent from server: ',response);
     res.status(200).json({'product_id':req.query.product_id,'results':response});
   })
   }))
@@ -45,7 +52,7 @@ app.post('/qa/questions/', async function (req, res){
       if(err) {
         res.status(500).send('server error');
       }
-      console.log('response sent from server: ',response);
+      // console.log('response sent from server: ',response);
       res.status(201).send('');
     });
   }
@@ -60,11 +67,11 @@ app.get('/qa/questions/:question_id?/answers/', async function (req, res){
       console.log(err, err);
       res.status(500).send('internal error')
     } else {
-      console.log('response ', response)
+      // console.log('response ', response)
       if (response.length === 0 ) {
         res.status(404).send('id does not exist in table');
       } else {
-        console.log('response sent from server ANSWERS', response);
+        // console.log('response sent from server ANSWERS', response);
         res.status(200).json({'question_id': req.params.question_id, 'count': count, 'page': page, 'results':response});
       }
     }
@@ -85,7 +92,7 @@ app.post('/qa/questions/:question_id?/answers/', async function (req, res){
       if(err) {
         res.status(500).send('server error');
       }
-      console.log('response sent from server: ',response);
+      // console.log('response sent from server: ',response);
       res.status(201).send('');
     });
   }

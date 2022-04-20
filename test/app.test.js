@@ -1,15 +1,12 @@
 // const server = require('./server/server');
 const supertest = require('supertest');
-// const app = require('./server/index.js');
-
+var server = require('../server/server.js');
 describe('test server API', function() {
-
-  var server;
-  //const query = require('../database/index.js')
+  // var server;
   const pool =  require('../database/index.js')
 
   beforeEach(function(){
-    server = require('../server/server.js');
+
     return pool.query('START TRANSACTION');
 
   });
@@ -24,17 +21,6 @@ describe('test server API', function() {
     pool.close();
     console.log('closed pool connections');
   })
-
-  test('GET /posts', async() => {
-    await supertest(server).get('/')
-    .expect(200)
-    .then((response) => {
-
-      expect(response.text).toEqual("{\"info\":\"Node.js, Express, and Postgres API\"}");
-      expect(response.type).toEqual('application/json');
-
-    })
-  });
 
 //GET qa/questions route
 describe('test qa/questions route', function() {
@@ -98,9 +84,10 @@ describe('test GET answers route', function() {
     });
   });
 
-
+ 
 
 });
+
 
 
 describe('test update answers as helpful', function() {

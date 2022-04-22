@@ -68,12 +68,12 @@ app.get('/qa/questions/:question_id?/answers/', async function (req, res){
       res.status(500).send('internal error')
     } else {
       // console.log('response ', response)
-      if (response.length === 0 ) {
-        res.status(404).send('id does not exist in table');
-      } else {
+      // if (response.length === 0 ) {
+      //   res.status(404).send('id does not exist in table');
+      // } else {
         // console.log('response sent from server ANSWERS', response);
         res.status(200).json({'question_id': req.params.question_id, 'count': count, 'page': page, 'results':response});
-      }
+      // }
     }
   })
 });

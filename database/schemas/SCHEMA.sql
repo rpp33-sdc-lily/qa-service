@@ -25,13 +25,14 @@ CREATE TABLE IF NOT EXISTS questions
     helpful integer,
     CONSTRAINT questions_pkey PRIMARY KEY (id)
 );
-  \COPY questions from '/Users/chloem/RPP33/qa-service/database/questions.csv' delimiter ',' csv header;
+  \COPY questions from '/Users/chloem/RPP33/qa-service/database/files/questions.csv' delimiter ',' csv header;
 
   ALTER TABLE questions ADD COLUMN new_id UUID NULL;
   UPDATE questions SET new_id = CAST(LPAD(TO_HEX(id), 32, '0') AS UUID);
   ALTER TABLE IF EXISTS public.questions
      OWNER to postgres;
   ALTER TABLE questions ADD COLUMN question_date  timestamptz NULL;
+  create index on questions (product_id);
   update questions SET question_date = to_timestamp(date_written/1000);
   CREATE SEQUENCE q_id_seq MINVALUE 3518964;
   ALTER TABLE questions
@@ -52,12 +53,13 @@ CREATE TABLE IF NOT EXISTS answers
     CONSTRAINT answers_pkey PRIMARY KEY (id)
 );
 
-  \COPY answers from '/Users/chloem/RPP33/qa-service/database/answers.csv' delimiter ',' csv header;
+  \COPY answers from '/Users/chloem/RPP33/qa-service/database/files/answers.csv' delimiter ',' csv header;
 
   ALTER TABLE answers ADD COLUMN new_id UUID NULL;
   UPDATE answers SET new_id = CAST(LPAD(TO_HEX(id), 32, '0') AS UUID);
   ALTER TABLE answers ADD COLUMN answer_date  timestamptz NULL;
   update answers SET answer_date = to_timestamp(date_written/1000);
+  create index on answers (question_id);
   CREATE SEQUENCE a_id_seq MINVALUE 6879307;
   ALTER TABLE answers
   ALTER id SET DEFAULT nextval('a_id_seq');
@@ -68,9 +70,11 @@ CREATE TABLE IF NOT EXISTS photos
    answer_id integer NOT NULL REFERENCES answers (id),
    url character varying COLLATE pg_catalog."default"
 );
-  \COPY photos from '/Users/chloem/RPP33/qa-service/database/answers_photos.csv' delimiter ',' csv header;
+  \COPY photos from '/Users/chloem/RPP33/qa-service/database/files/answers_photos.csv' delimiter ',' csv header;
   ALTER TABLE photos ADD COLUMN new_id UUID NULL;
   UPDATE photos SET new_id = CAST(LPAD(TO_HEX(id), 32, '0') AS UUID);
   CREATE SEQUENCE p_id_seq MINVALUE 202;
+  create index on photos (answer_id);
   ALTER TABLE photos
   ALTER id SET DEFAULT nextval('p_id_seq');
+

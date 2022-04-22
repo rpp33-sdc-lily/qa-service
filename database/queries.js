@@ -4,9 +4,10 @@ const pool = require('./index.js');
 const getQuestions = (req, res, callback) => {
   let product_id = req.query.product_id;
 
-  let page = req.query.page ? req.query.page : 1;
+  let page = req.query.page ? req.query.page -1 : 0;
   let count =  req.query.count ? req.query.count : 5;
-
+  let offset = page * count;
+console.log('santity check: ', product_id, count, page);
   if (product_id) {
     pool.query(`WITH
     question_ids AS (
@@ -53,7 +54,8 @@ const getQuestions = (req, res, callback) => {
          GROUP BY p.answer_id, a.question_id, a.aid,a.body, a.date_written, a.helpful, a.reported, a.answerer_name
        ) AS a
        ON q.id = a.question_id
-       GROUP BY q.id, q.body, q.question_date, q.asker_name, q.helpful,q.reported;`, [product_id])
+       GROUP BY q.id, q.body, q.question_date, q.asker_name, q.helpful,q.reported
+       LIMIT $2 OFFSET $3 ;`, [product_id, count, offset])
       .then(result => {
         // console.log('results in query ', result.rows);
         callback(null, result.rows);
@@ -77,6 +79,9 @@ const getQuestions = (req, res, callback) => {
 
 const getAnswers = (req, res,callback) => {
   let question_id = req.params.question_id;
+  let page = req.query.page ? req.query.page -1 : 0;
+  let count =  req.query.count ? req.query.count : 5;
+  let offset = page * count;
   // console.log('any', question_id)
   if (question_id) {
     pool.query(`WITH
@@ -105,8 +110,9 @@ const getAnswers = (req, res,callback) => {
          ON photos.answer_id = answer_ids.id
        ) AS p
        ON p.answer_id = a.id
-       GROUP BY p.answer_id, a.question_id, a.id, a.body, a.answer_date, a.helpful, a.reported, a.answerer_name;
-  `, [question_id])
+       GROUP BY p.answer_id, a.question_id, a.id, a.body, a.answer_date, a.helpful, a.reported, a.answerer_name
+       LIMIT $2 OFFSET $3;
+  `, [question_id, count, offset])
       .then(result => {
 
         callback(null, result.rows);

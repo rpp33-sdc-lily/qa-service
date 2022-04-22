@@ -35,12 +35,23 @@ describe('test qa/questions route', function() {
     await supertest(server).get('/qa/questions?product_id=10')
     .expect(200)
     .then((response) => {
+      console.log('9', JSON.parse(response.text));
       console.log('9', JSON.parse(response.text).results.length);
       expect(JSON.parse(response.text).results.length).toEqual(3);
       expect(JSON.parse(response.text).results[0].question_body).toEqual('HI GUYS?');
       expect(JSON.parse(response.text).results[1].question_body).toEqual('Where is this product made?');
       expect(JSON.parse(response.text).results[2].question_body).toEqual('What fabric is the top made of?');
       expect(JSON.parse(response.text).results[0].answers.length).toEqual(1);
+    })
+  });
+  test('Happy path: GET /qa/questions?product_id=64620 with count and page params', async() => {
+    await supertest(server).get('/qa/questions?product_id=1&page=2&count=2')
+    .expect(200)
+    .then((response) => {
+      expect(JSON.parse(response.text).results.length).toEqual(2);
+      expect(JSON.parse(response.text).results[0].question_id).toEqual(3);
+      expect(JSON.parse(response.text).results[1].question_id).toEqual(4);
+
     })
   });
 });
@@ -60,11 +71,13 @@ describe('test GET answers route', function() {
   //HAPPY
   test('Sad Path: GET answers with invalid ID', async() => {
     await supertest(server).get('/qa/questions/3/answers/')
-    .expect(404)
+    .expect(200)
+    // .expect(404)
     .then((response) => {
       // console.log('answers =  ', JSON.parse(response.text))
       console.log('answer =',response.text)
-      expect(response.text).toEqual('id does not exist in table');
+      // expect(response.text).toEqual('id does not exist in table');
+      expect(JSON.parse(response.text).results.length).toEqual(0);
     });
   });
 
@@ -82,9 +95,35 @@ describe('test GET answers route', function() {
       expect(JSON.parse(response.text).results[0].photos.length).toEqual(3);
       expect(JSON.parse(response.text).results[1].photos.length).toEqual(0);
     });
+
+  });
+  test('Happy Path: GET answers with count > number of results should return all results', async() => {
+    await supertest(server).get('/qa/questions/50/answers/?count=100&page=1')
+    .expect(200)
+    .then((response) => {
+      // console.log('answers =  ', JSON.parse(response.text))
+      console.log('answer =', JSON.parse(response.text))
+
+      expect(JSON.parse(response.text).results.length).toEqual(4);
+
+    });
+
   });
 
- 
+  test('Happy Path: GET answers with page > number of pages of results should return no results', async() => {
+    await supertest(server).get('/qa/questions/50/answers/?count=4&page=2')
+    .expect(200)
+    .then((response) => {
+      // console.log('answers =  ', JSON.parse(response.text))
+      console.log('answer =', JSON.parse(response.text))
+
+      expect(JSON.parse(response.text).results.length).toEqual(0);
+
+    });
+
+  });
+
+
 
 });
 

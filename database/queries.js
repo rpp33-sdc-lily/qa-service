@@ -7,7 +7,7 @@ const getQuestions = (req, res, callback) => {
   let page = req.query.page ? req.query.page -1 : 0;
   let count =  req.query.count ? req.query.count : 5;
   let offset = page * count;
-console.log('santity check: ', product_id, count, page);
+// console.log('santity check: ', product_id, count, page);
   if (product_id) {
     pool.query(`WITH
     question_ids AS (

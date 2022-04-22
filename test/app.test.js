@@ -31,6 +31,13 @@ describe('test qa/questions route', function() {
       expect(response.text).toEqual('Missing query param product_id  please use format ?product_id=product_id');
     });
   });
+  test('Sad path: GET /qa/questions?product_id=64620 with page greater than pages avaliable', async() => {
+    await supertest(server).get('/qa/questions?product_id=1&page=3&count=5')
+    .expect(200)
+    .then((response) => {
+      expect(JSON.parse(response.text).results.length).toEqual(0);
+    })
+  });
   test('Happy path: GET /qa/questions?product_id=10 with required param', async() => {
     await supertest(server).get('/qa/questions?product_id=10')
     .expect(200)
@@ -54,6 +61,7 @@ describe('test qa/questions route', function() {
 
     })
   });
+
 });
 // should also test with page and count later
 
@@ -79,6 +87,18 @@ describe('test GET answers route', function() {
       // expect(response.text).toEqual('id does not exist in table');
       expect(JSON.parse(response.text).results.length).toEqual(0);
     });
+  });
+  test('Sad Path: GET answers with page > number of pages of results should return no results', async() => {
+    await supertest(server).get('/qa/questions/50/answers/?count=4&page=2')
+    .expect(200)
+    .then((response) => {
+      // console.log('answers =  ', JSON.parse(response.text))
+      console.log('answer =', JSON.parse(response.text))
+
+      expect(JSON.parse(response.text).results.length).toEqual(0);
+
+    });
+
   });
 
   test('Happy Path: GET answers with required param', async() => {
@@ -110,18 +130,7 @@ describe('test GET answers route', function() {
 
   });
 
-  test('Happy Path: GET answers with page > number of pages of results should return no results', async() => {
-    await supertest(server).get('/qa/questions/50/answers/?count=4&page=2')
-    .expect(200)
-    .then((response) => {
-      // console.log('answers =  ', JSON.parse(response.text))
-      console.log('answer =', JSON.parse(response.text))
 
-      expect(JSON.parse(response.text).results.length).toEqual(0);
-
-    });
-
-  });
 
 
 

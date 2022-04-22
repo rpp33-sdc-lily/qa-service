@@ -32,7 +32,14 @@ app.get('/qa/questions/', ((req, res) => {
       console.log(err, err);
     }
     // console.log('response sent from server: ',response);
-    res.status(200).json({'product_id':req.query.product_id,'results':response});
+    // res.status(200).json({'product_id':req.query.product_id,'results':response});'// console.log('response ', response)
+    if (response.length === 0 ) {
+      console.log('no id found')
+      res.status(404).send('id does not exist in table');
+    } else {
+      // console.log('response sent from server ANSWERS', response);
+      res.status(200).json({'question_id': req.params.question_id, 'results':response});
+    }
   })
   }))
 

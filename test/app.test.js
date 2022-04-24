@@ -25,14 +25,14 @@ describe('test server API', function() {
 //GET qa/questions route
 describe('test qa/questions route', function() {
   test('Sad Path: GET /qa/questions without the required param', async() => {
-    await supertest(server).get('/qa/questions')
+    await supertest(server).get('/qa/questions/')
     .expect(404)
     .then((response) => {
       expect(response.text).toEqual('Missing query param product_id  please use format ?product_id=product_id');
     });
   });
   test('Sad path: GET /qa/questions?product_id=64620 with page greater than pages avaliable', async() => {
-    await supertest(server).get('/qa/questions?product_id=1&page=3&count=5')
+    await supertest(server).get('/qa/questions/?product_id=1&page=3&count=5')
     .expect(200)
     .then((response) => {
       expect(JSON.parse(response.text).results.length).toEqual(0);

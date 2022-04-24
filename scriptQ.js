@@ -2,7 +2,7 @@
 import http from 'k6/http';
 import { sleep, check } from 'k6';
 export const options = {
-  vus: 1000,
+  vus: 4000,
   duration: '1m',
   ext: {
     loadimpact: {
@@ -28,7 +28,7 @@ export default function () {
   //980011
 //  var id= generateRandom(900010, 1000011);// for product_id for use in questions table
  var id_index = generateRandom(0, ids.length-1);
-/
+
 
   // console.log('id', id)
   const res = http.get(`http://localhost:3000/qa/questions?product_id=${ids[id_index]}`);

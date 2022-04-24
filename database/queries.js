@@ -13,7 +13,7 @@ const getQuestions = (req, res, callback) => {
     question_ids AS (
         SELECT *
         FROM questions
-        WHERE product_id = 893212
+        WHERE product_id = $1
     ), answer_ids as (
       SELECT
       a.id as aid,

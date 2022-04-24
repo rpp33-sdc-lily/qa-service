@@ -1,72 +1,141 @@
 // const server = require('./server/server');
 const supertest = require('supertest');
-// const app = require('./server/index.js');
-
+var server = require('../server/server.js');
 describe('test server API', function() {
-
-  var server;
+  // var server;
+  const pool =  require('../database/index.js')
 
   beforeEach(function(){
-    server = require('../server/server.js');
+
+    return pool.query('START TRANSACTION');
+
   });
   afterEach(function () {
     // server.close();
+    return pool.query('ROLLBACK');
   });
+  beforeAll(() => {
 
-  test.only('GET /posts', async() => {
-    await supertest(server).get('/')
-    .expect(200)
-    .then((response) => {
-
-      expect(response.text).toEqual("{\"info\":\"Node.js, Express, and Postgres API\"}");
-      expect(response.type).toEqual('application/json');
-
-    })
-  });
+  })
+  afterAll(() => {
+    pool.close();
+    console.log('closed pool connections');
+  })
 
 //GET qa/questions route
 describe('test qa/questions route', function() {
-  test('GET /qa/questions without the required param', async() => {
+  test('Sad Path: GET /qa/questions without the required param', async() => {
     await supertest(server).get('/qa/questions')
     .expect(404)
     .then((response) => {
       expect(response.text).toEqual('Missing query param product_id  please use format ?product_id=product_id');
     });
   });
-  test('GET /qa/questions?product_id=545332 with required param', async() => {
-    await supertest(server).get('/qa/questions?product_id=545332')
+  test('Sad path: GET /qa/questions?product_id=64620 with page greater than pages avaliable', async() => {
+    await supertest(server).get('/qa/questions?product_id=1&page=3&count=5')
     .expect(200)
     .then((response) => {
-      expect(response.text).toEqual('Here are your questions');
-    });
+      expect(JSON.parse(response.text).results.length).toEqual(0);
+    })
   });
+  test('Happy path: GET /qa/questions?product_id=10 with required param', async() => {
+    await supertest(server).get('/qa/questions?product_id=10')
+    .expect(200)
+    .then((response) => {
+      console.log('9', JSON.parse(response.text));
+      console.log('9', JSON.parse(response.text).results.length);
+      expect(JSON.parse(response.text).results.length).toEqual(3);
+      expect(JSON.parse(response.text).results[0].question_body).toEqual('HI GUYS?');
+      expect(JSON.parse(response.text).results[1].question_body).toEqual('Where is this product made?');
+      expect(JSON.parse(response.text).results[2].question_body).toEqual('What fabric is the top made of?');
+      expect(JSON.parse(response.text).results[0].answers.length).toEqual(1);
+    })
+  });
+  test('Happy path: GET /qa/questions?product_id=64620 with count and page params', async() => {
+    await supertest(server).get('/qa/questions?product_id=1&page=2&count=2')
+    .expect(200)
+    .then((response) => {
+      expect(JSON.parse(response.text).results.length).toEqual(2);
+      expect(JSON.parse(response.text).results[0].question_id).toEqual(3);
+      expect(JSON.parse(response.text).results[1].question_id).toEqual(4);
+
+    })
+  });
+
 });
 // should also test with page and count later
 
-describe('test GET answers route route', function() {
+describe('test GET answers route', function() {
 
    //SAD
     ///qa/questions/:64626/answers/
-    test('GET answers without required param', async() => {
+    test('SAD Path: GET answers without required param', async() => {
     await supertest(server).get('/qa/questions/answers/')
     .expect(404)
     .then((response) => {
-      expect(response.text).toEqual('malformed query please use format /qa/questions/:question_id/answers/');
+      expect(response.text).toEqual('Missing query param question_id. please use format questions/question_id/answers');
     });
   });
   //HAPPY
-  test('GET answers with required param', async() => {
-    await supertest(server).get('/qa/questions/:64626/answers/')
+  test('Sad Path: GET answers with invalid ID', async() => {
+    await supertest(server).get('/qa/questions/3/answers/')
     .expect(200)
+    // .expect(404)
     .then((response) => {
-      expect(response.text).toEqual('query.params');
+      // console.log('answers =  ', JSON.parse(response.text))
+      console.log('answer =',response.text)
+      // expect(response.text).toEqual('id does not exist in table');
+      expect(JSON.parse(response.text).results.length).toEqual(0);
     });
   });
+  test('Sad Path: GET answers with page > number of pages of results should return no results', async() => {
+    await supertest(server).get('/qa/questions/50/answers/?count=4&page=2')
+    .expect(200)
+    .then((response) => {
+      // console.log('answers =  ', JSON.parse(response.text))
+      console.log('answer =', JSON.parse(response.text))
 
+      expect(JSON.parse(response.text).results.length).toEqual(0);
 
-
+    });
 
   });
+
+  test('Happy Path: GET answers with required param', async() => {
+    await supertest(server).get('/qa/questions/1/answers/')
+    .expect(200)
+    .then((response) => {
+      // console.log('answers =  ', JSON.parse(response.text))
+      console.log('answer =', JSON.parse(response.text))
+
+      expect(JSON.parse(response.text).results.length).toEqual(5);
+      expect(JSON.parse(response.text).results[0].body).toEqual("Something pretty soft but I can't be sure");
+      expect(JSON.parse(response.text).results[1].body).toEqual('Its the best! Seriously magic fabric');
+      expect(JSON.parse(response.text).results[2].body).toEqual("DONT BUY IT! It's bad for the environment");
+      expect(JSON.parse(response.text).results[0].photos.length).toEqual(3);
+      expect(JSON.parse(response.text).results[1].photos.length).toEqual(0);
+    });
+
+  });
+  test('Happy Path: GET answers with count > number of results should return all results', async() => {
+    await supertest(server).get('/qa/questions/50/answers/?count=100&page=1')
+    .expect(200)
+    .then((response) => {
+      // console.log('answers =  ', JSON.parse(response.text))
+      console.log('answer =', JSON.parse(response.text))
+
+      expect(JSON.parse(response.text).results.length).toEqual(4);
+
+    });
+
+  });
+
+
+
+
+
+});
+
 
 
 describe('test update answers as helpful', function() {
@@ -102,7 +171,7 @@ describe('test update answers as helpful', function() {
  //HAPPY
  //PUT /qa/answers/:answer_id/helpful
  test('Happy Path: put update answer helpfulness', async() => {
-   await supertest(server).put('/qa/answers/745/helpful')
+   await supertest(server).put('/qa/answers/699/helpful')
    .expect(204)
    .then((response) => {
      expect(response.text).toEqual('');
@@ -135,19 +204,40 @@ describe('test update answers as helpful', function() {
   // PUT /qa/answers/:answer_id/report
   test('Sad Path: Put update report answer without query param', async() => {
     await supertest(server).put('/qa/answers/report')
-    .expect(404)
+    .expect(400)
     .then((response) => {
       expect(response.text).toEqual('malformed query please use format /qa/answers/:answer_id/report');
     });
   });
-  //HAPPY
-  //PUT /qa/answers/:answer_id/helpful
+  test('Sad Path:id not in table', async() => {
+    await supertest(server).put('/qa/answers/700/report')
+    .expect(404)
+    .then((response) => {
+      expect(response.text).toEqual('id does not exist in table');
+    });
+  });
+  //HAPPY PUT /qa/answers/:answer_id/report
   test('Happy Path: report answer', async() => {
-    await supertest(server).put('/qa/answers/745/report')
+    await supertest(server).put('/qa/answers/699/report')
     .expect(204)
     .then((response) => {
       expect(response.text).toEqual('');
-    });
+    })
+    .then( () => { //verify that the results in the table is correct
+      return pool.query('SELECT * FROM answers WHERE id = $1', [699]);
+    })
+    .then(res => {
+     expect(res.rows[0].id).toEqual(699);
+     expect(res.rows[0].reported).toEqual(true);
+    })
+    .then(()=> { // set the results back to the original state
+      return pool.query('UPDATE answers set reported = false WHERE id = $1', [699])
+        .then(response => {
+          // console.log('update ',response);
+        })
+        .catch(err => { console.log('error updated report', err);})
+      })
+    // .catch(err => { console.log('1.5', err);})
   });
 
 
@@ -165,11 +255,18 @@ describe('test update answers as helpful', function() {
   //HAPPY
   //POST /qa/questions/:question_id/answers
   test('Happy Path: insert an answer', async() => {
-    await supertest(server).post('/qa/questions/64626/answers?name=arie&email=babynews@gmail.com&body=SunnySkies')
+    await supertest(server).post('/qa/questions/109/answers?name=arie&email=babynews@gmail.com&body=SunnySkies')
     .expect(201)
     .then((response) => {
       expect(response.text).toEqual('');
-    });
+    })
+    .then(()=> {
+      return pool.query('SELECT * FROM answers WHERE question_id = $1',[109])
+      .then(response => {
+       expect(response.rows.length).toEqual(5);
+      })
+     })
+
   });
 
 });
@@ -185,12 +282,18 @@ describe('insert a new question', function() {
  });
  //HAPPY
  //POST /qa/questions/:question_id/answers
- test('Happy Path: insert an answer', async() => {
-   await supertest(server).post('/qa/questions/?product_id=64626&name=arie&email=babynews@gmail.com&body=ThunderStorm')
+ test('Happy Path: insert a question with valid params', async() => {
+   await supertest(server).post('/qa/questions/?product_id=111&name=arie&email=babynews@gmail.com&body=ThunderStorm')
    .expect(201)
    .then((response) => {
      expect(response.text).toEqual('');
-   });
+   }).then(()=> {
+    return pool.query('SELECT * FROM questions WHERE product_id = $1',[111])
+    .then(response => {
+     expect(response.rows.length).toEqual(1);
+    })
+   })
+
  });
 
 });

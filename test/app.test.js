@@ -22,6 +22,17 @@ describe('test server API', function() {
     console.log('closed pool connections');
   })
 
+  describe('insert any old test', function() {
+    //SAD
+    //POST /qa/questions/
+   test('any', async() => {
+     await supertest(server).get('/test')
+     .expect(200)
+     .then((response) => {
+       expect(response.text).toEqual('anything');
+     });
+   });
+  });
 //GET qa/questions route
 describe('test qa/questions route', function() {
   test('Sad Path: GET /qa/questions without the required param', async() => {
@@ -42,8 +53,8 @@ describe('test qa/questions route', function() {
     await supertest(server).get('/qa/questions?product_id=10')
     .expect(200)
     .then((response) => {
-      console.log('9', JSON.parse(response.text));
-      console.log('9', JSON.parse(response.text).results.length);
+      // console.log('9', JSON.parse(response.text));
+      // console.log('9', JSON.parse(response.text).results.length);
       expect(JSON.parse(response.text).results.length).toEqual(3);
       expect(JSON.parse(response.text).results[0].question_body).toEqual('HI GUYS?');
       expect(JSON.parse(response.text).results[1].question_body).toEqual('Where is this product made?');

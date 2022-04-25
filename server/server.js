@@ -11,11 +11,12 @@ app.use(
 );
 app.get('/', (req, res) => {
   // res.status(200).send('hello, FEC');
-  console.log('/ response')
-  res.json({'info': 'Node.js, Express, and Postgres API'});
+  // console.log('/ response')
+  res.status(200).json({'info': 'Node.js, Express, and Postgres API'});
 });
 app.get('/test', (req, res) => {
-  res.status(200).json('anthing');
+  console.log('Test that doesnt go to database')
+  res.status(200).send('anything');
 })
 //GET /qa/questions/:question_id/answers
 // GET qa/questions/
@@ -34,7 +35,7 @@ app.get('/qa/questions/', ((req, res) => {
     // console.log('response sent from server: ',response);
     // res.status(200).json({'product_id':req.query.product_id,'results':response});'// console.log('response ', response)
     if (response.length === 0 ) {
-      console.log('no id found')
+      // console.log('no id found')
       // res.status(404).send('id does not exist in table');
       res.status(200).json({'product_id':req.query.product_id,'results':response});
     } else {

@@ -9,17 +9,14 @@ app.use(
   })
 );
 app.get('/', (req, res) => {
-  // res.status(200).send('hello, FEC');
-  // console.log('/ response')
   res.status(200).json({'info': 'Node.js, Express, and Postgres API'});
 });
-app.get('/test', (req, res) => {
-  console.log('Test that doesnt go to database')
-  res.status(200).send('anything');
+
+app.get('/loaderio-307be07522ec55e91575ee40ad3b67db.html', (req, res) => {
+  console.log('send file back for loaderio')
+  res.status(200).send('loaderio-307be07522ec55e91575ee40ad3b67db');
 })
 //GET /qa/questions/:question_id/answers
-// GET qa/questions/
-// app.get('/qa/questions/', db.getQuestions);
 
 
 app.get('/info/', db.selectKeysForTable);

@@ -2,7 +2,7 @@ node_modules
 *.csv
 *.env
 *.config
-db_config
+db_config*
 .env
 project-atelier/
 coverage/

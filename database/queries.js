@@ -63,12 +63,8 @@ console.log('santity check: ', product_id, count, page);
         // res.status(200).send(res.rows);
       }).catch(err => {
         console.log('err', err);
-        throw err;
+        callback(err, null)
       })
-      // return 'sadder';
-
-
-      // res.status(200).send('sad')
 
   } else {
     res.status(404).send('Missing query param product_id  please use format ?product_id=product_id');

@@ -1,7 +1,7 @@
 const Pool = require('pg').Pool
 console.log('in ', process.env.NODE_ENV, ' mode');
 var db = process.env.NODE_ENV === 'production' ? 'qa' : 'qatestdb';
-var db_password = require('./config.js').DB_PASSWORD;
+var db_password = require('./db_config.js').DB_PASSWORD;
 console.log('db selected: ', db);
 var pool;
 if (db === 'qa') {

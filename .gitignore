@@ -2,7 +2,8 @@ node_modules
 *.csv
 *.env
 *.config
-config
+db_config*
+.env
 project-atelier/
 coverage/
 question_ids1

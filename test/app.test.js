@@ -22,17 +22,7 @@ describe('test server API', function() {
     console.log('closed pool connections');
   })
 
-  describe('insert any old test', function() {
-    //SAD
-    //POST /qa/questions/
-   test('any', async() => {
-     await supertest(server).get('/test')
-     .expect(200)
-     .then((response) => {
-       expect(response.text).toEqual('anything');
-     });
-   });
-  });
+
 //GET qa/questions route
 describe('test qa/questions route', function() {
   test('Sad Path: GET /qa/questions without the required param', async() => {
@@ -286,7 +276,7 @@ describe('insert a new question', function() {
   //POST /qa/questions/
  test('Sad Path: insert a new Question', async() => {
    await supertest(server).post('/qa/questions/')
-   .expect(404)
+   .expect(400)
    .then((response) => {
      expect(response.text).toEqual('malformed query. query requires, body, name and email');
    });

@@ -30,8 +30,7 @@ export default function () {
 //  var id= generateRandom(3167073	, 3518969);// for product_id for use in questions table
   var id= generateRandom(0, ids.length-1); // for question_id for use in Answers table
 
-  // console.log('id', id)
-  // const res = http.get(`http://localhost:3000/qa/questions?product_id=${id}`);
+ 
   const res = http.get(`http://localhost:3000/qa/questions/${ids[id]}/answers`);
 
   check(res, { 'status was 200': (r) => r.status == 200 });

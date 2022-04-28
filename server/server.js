@@ -15,7 +15,7 @@ app.get('/', (req, res) => {
 var product_ids =require('../database/files/questionsPayload.js');
 app.get('/payload/product_id', (req, res) => {
   console.log('send file back for loaderio')
-  res.status(200).json(product_ids);
+  res.status(200).send(product_ids);
 })
 //GET /qa/questions/:question_id/answers
 

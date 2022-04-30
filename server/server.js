@@ -1,3 +1,4 @@
+require('newrelic');
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
@@ -18,7 +19,6 @@ app.get('/payload/product_id', (req, res) => {
   res.status(200).send(product_ids);
 })
 //GET /qa/questions/:question_id/answers
-
 
 app.get('/info/', db.selectKeysForTable);
 

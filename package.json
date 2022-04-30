@@ -1,6 +1,8 @@
 {
   "dependencies": {
     "express": "^4.17.3",
+    "newrelic": "^8.10.0",
+    "nodemon": "^2.0.16",
     "pg": "^8.7.3",
     "postgresql": "^0.0.1"
   },
@@ -19,7 +21,7 @@
     "test": "jest && export NODE_ENV=development",
     "test_coverage": "jest --coverage && export NODE_ENV=development",
     "start": "export NODE_ENV=production&& nodemon server/index.js",
-    "start_dev":  "export NODE_ENV=test&& nodemon server/index.js"
+    "start_dev": "export NODE_ENV=test&& nodemon server/index.js"
   },
   "repository": {
     "type": "git",

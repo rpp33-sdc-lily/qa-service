@@ -20,7 +20,6 @@ app.get('/payload/product_id', (req, res) => {
 })
 //GET /qa/questions/:question_id/answers
 
-//ssh -i "FEC_KEY.pem" ubuntu@ec2-3-94-191-251.compute-1.amazonaws.com
 app.get('/info/', db.selectKeysForTable);
 
 app.get('/qa/questions/', ((req, res) => {

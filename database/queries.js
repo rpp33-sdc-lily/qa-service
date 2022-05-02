@@ -7,7 +7,7 @@ const getQuestions = (req, res, callback) => {
   let count =  req.query.count ? req.query.count : 5;
   let offset = page * count;
 
-console.log('santity check: ', product_id, count, page);
+// console.log('santity check: ', product_id, count, page);
   if (product_id) {
     pool.query(`WITH
     question_ids AS (
@@ -58,12 +58,12 @@ console.log('santity check: ', product_id, count, page);
        LIMIT $2 OFFSET $3 ;`, [product_id, count, offset])
       .then(result => {
         // console.log('results in query ', result.rows);
-        callback(null, result.rows);
-       // return result.rows;
-        // res.status(200).send(res.rows);
+        res.status(200).json({'product_id':product_id, 'results':result.rows});
+       // callback(null, result.rows);
       }).catch(err => {
         console.log('err', err);
-        callback(err, null)
+        //callback(err, null)
+        res.status(500).send(err);
       })
 
   } else {

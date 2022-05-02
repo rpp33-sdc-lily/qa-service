@@ -12,9 +12,9 @@ app.use(
 app.get('/', (req, res) => {
   res.status(200).json({'info': 'Node.js, Express, and Postgres API'});
 });
-app.get('/loaderio-a7af705ee4922cec06f0e698138da2b5.html', (req, res) => {
+app.get('/loaderio-43542525e4a71284b193788716b84238.html', (req, res) => {
   console.log('send file back for loaderio')
-  res.status(200).send('loaderio-a7af705ee4922cec06f0e698138da2b5');
+  res.status(200).send('loaderio-43542525e4a71284b193788716b84238');
 })
 
 var product_ids =require('../database/files/questionsPayload.js');
@@ -26,16 +26,19 @@ app.get('/payload/product_id', (req, res) => {
 
 app.get('/info/', db.selectKeysForTable);
 
-app.get('/qa/questions/', ((req, res) => {
+// app.get('/qa/questions/', ((req, res) => {
 
-  db.getQuestions(req,res,(err,response)=>{
-    if(err) {
-      console.log('err in questions', err);
-      res.status(500).send(err);
-    }
-      res.status(200).json({'product_id':req.query.product_id,'results':response});
-  });
-}));
+//   db.getQuestions(req,res,(err,response)=>{
+//     if(err) {
+//       console.log('err in questions', err);
+//       res.status(500).send(err);
+//     }
+//       res.status(200).json({'product_id':req.query.product_id,'results':response});
+//   });
+
+// }));
+
+app.get('/qa/questions/', db.getQuestions);
 
    //POST /qa/questions/:question_id/answers
 app.post('/qa/questions/', async function (req, res){

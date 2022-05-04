@@ -57,7 +57,7 @@ const getQuestions = (req, res, callback) => {
        GROUP BY q.id, q.body, q.question_date, q.asker_name, q.helpful,q.reported
        LIMIT $2 OFFSET $3 ;`, [product_id, count, offset])
       .then(result => {
-        // console.log('results in query ', result.rows);
+        console.log('success');
         res.status(200).json({'product_id':product_id, 'results':result.rows});
        // callback(null, result.rows);
       }).catch(err => {

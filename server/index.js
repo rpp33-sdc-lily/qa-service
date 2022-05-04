@@ -1,5 +1,8 @@
 const app = require('./server')
-const port = 3000;
+var portNum = process.env.PORT_ENV ? process.env.PORT_ENV : 3000;
+
+const port = portNum;
+
 
 
  app.listen(port, () => {

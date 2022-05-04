@@ -12,9 +12,10 @@ app.use(
 app.get('/', (req, res) => {
   res.status(200).json({'info': 'Node.js, Express, and Postgres API'});
 });
-app.get('/loaderio-9fc64f37560e983f7b3451588c2b7545.html', (req, res) => {
-  console.log('send file back for loaderio')
-  res.status(200).send('loaderio-9fc64f37560e983f7b3451588c2b7545');
+var loaderioKey = 'loaderio-7d79283d13e6c8fa3a9eaa0aababbbfe';
+app.get(`/${loaderioKey}/`, (req, res) => {
+  console.log(`sent ${loaderioKey}  back`);
+  res.status(200).send(loaderioKey);
 })
 
 var product_ids =require('../database/files/questionsPayload.js');

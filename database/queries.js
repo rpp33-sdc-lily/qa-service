@@ -1,5 +1,6 @@
 const query = require('./index.js').query;
 const pool = require('./index.js');
+const prep = require('pg-prepared');
 
 const getQuestions = (req, res, callback) => {
   let product_id = req.query.product_id;
@@ -9,8 +10,10 @@ const getQuestions = (req, res, callback) => {
 
 // console.log('santity check: ', product_id, count, page);
   if (product_id) {
-    pool.query(`WITH
-    question_ids AS (
+    var query2 = {
+      // give the query a unique name
+      name: 'fetch-questions',
+      text: `WITH question_ids AS (
         SELECT *
         FROM questions
         WHERE product_id = $1
@@ -55,9 +58,16 @@ const getQuestions = (req, res, callback) => {
        ) AS a
        ON q.id = a.question_id
        GROUP BY q.id, q.body, q.question_date, q.asker_name, q.helpful,q.reported
-       LIMIT $2 OFFSET $3 ;`, [product_id, count, offset])
+       LIMIT $2 OFFSET $3`,
+      //  values: [product_id, count, offset]
+      values: [87843,5, 0]
+
+    };
+
+
+    pool.query(query2)
       .then(result => {
-        console.log('success');
+      
         res.status(200).json({'product_id':product_id, 'results':result.rows});
        // callback(null, result.rows);
       }).catch(err => {

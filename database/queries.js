@@ -1,6 +1,6 @@
 const query = require('./index.js').query;
 const pool = require('./index.js');
-const prep = require('pg-prepared');
+// const prep = require('pg-prepared');
 
 const getQuestions = (req, res, callback) => {
   let product_id = req.query.product_id;
@@ -57,7 +57,7 @@ const getQuestions = (req, res, callback) => {
          GROUP BY p.answer_id, a.question_id, a.aid,a.body, a.date_written, a.helpful, a.reported, a.answerer_name
        ) AS a
        ON q.id = a.question_id
-       GROUP BY q.id, q.body, q.question_date, q.asker_name, q.helpful,q.reported
+       GROUP BY  q.body, q.question_date, q.asker_name, q.helpful,q.reported,q.id
        LIMIT $2 OFFSET $3`,
       //  values: [product_id, count, offset]
       values: [87843,5, 0]
@@ -67,7 +67,7 @@ const getQuestions = (req, res, callback) => {
 
     pool.query(query2)
       .then(result => {
-      
+
         res.status(200).json({'product_id':product_id, 'results':result.rows});
        // callback(null, result.rows);
       }).catch(err => {

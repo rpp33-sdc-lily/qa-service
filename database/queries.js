@@ -60,7 +60,7 @@ const getQuestions = (req, res, callback) => {
        GROUP BY  q.body, q.question_date, q.asker_name, q.helpful,q.reported,q.id
        LIMIT $2 OFFSET $3`,
       //  values: [product_id, count, offset]
-      values: [87843,5, 0]
+      values: [product_id,5, 0]
 
     };
 

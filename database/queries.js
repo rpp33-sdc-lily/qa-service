@@ -13,11 +13,14 @@ const getQuestions = (req, res, callback) => {
     var query2 = {
       // give the query a unique name
       name: 'fetch-questions',
-      text: `WITH question_ids AS (
-        SELECT *
-        FROM questions
-        WHERE product_id = $1
-    ), answer_ids as (
+      text: ` SELECT
+      a.qid as question_id,
+      a.qbody as question_body,
+      a.question_date, a.asker_name,
+      a.qhelpful as question_helpfulness,
+      a.qreported,
+      CASE WHEN count(a.aid)= 0 THEN array_to_json('{}'::int[]) ELSE json_agg(json_build_object('id',a.aid,'body',a.body, 'date', a.date_written, 'answerer_name', a.answerer_name, 'helpfulness', a.helpful,'photos',a.photos)) END as answers
+   FROM (
       SELECT
       a.id as aid,
       a.question_id,
@@ -25,43 +28,25 @@ const getQuestions = (req, res, callback) => {
       a.date_written,
       a.answerer_name,
       a.helpful,
-      a.reported
-        FROM  question_ids as q
-        INNER JOIN answers as a
-        ON q.id = a.question_id
-    ) SELECT
-      q.id as question_id,
-      q.body as question_body,
-      q.question_date, q.asker_name,
-      q.helpful as question_helpfulness,
-      q.reported,
-      CASE WHEN count(a.id)= 0 THEN array_to_json('{}'::int[]) ELSE json_agg(json_build_object('id',a.id,'body',a.body, 'date', a.date, 'answerer_name', a.answerer_name, 'helpfulness', a.helpfulness,'photos',a.photos)) END as answers
-       FROM  question_ids as q
-       LEFT JOIN (
-         SELECT
-           a.question_id,
-           a.aid as id,
-           a.body as body,
-           a.date_written as date,
-         a.answerer_name,
-           a.helpful as helpfulness,
-           CASE WHEN count(p.id)= 0 THEN array_to_json('{}'::int[]) ELSE json_agg(json_build_object('id',p.id,'url',p.url)) END as photos
-         FROM answer_ids as a
-         LEFT JOIN  (
-           SELECT photos.id as id, photos.answer_id, photos.url
-           FROM answer_ids
-           JOIN photos
-           ON photos.answer_id = answer_ids.aid
-         ) AS p
-         ON p.answer_id = a.aid
-         GROUP BY p.answer_id, a.question_id, a.aid,a.body, a.date_written, a.helpful, a.reported, a.answerer_name
+      a.reported,
+          a.qid, a.qbody, a.question_date, a.asker_name, a.qhelpful, a.qreported,
+          CASE WHEN count(photos.id)= 0 THEN array_to_json('{}'::int[]) ELSE json_agg(json_build_object('id',photos.id,'url',photos.url)) END as photos
+        FROM ((
+                        SELECT id as qid, body as qbody, question_date, asker_name, helpful as qhelpful, reported as qreported
+                FROM questions
+                   WHERE product_id = $1
+                ) as q
+        LEFT JOIN answers as a
+        ON q.qid = a.question_id
+         ) as a
+           LEFT JOIN photos
+           ON photos.answer_id = a.id
+           GROUP BY photos.answer_id, a.question_id, a.id,a.body, a.date_written, a.helpful, a.reported, a.answerer_name,  a.qbody, a.question_date, a.asker_name, a.qhelpful,a.qreported, a.qid
        ) AS a
-       ON q.id = a.question_id
-       GROUP BY  q.body, q.question_date, q.asker_name, q.helpful,q.reported,q.id
+       GROUP BY  a.qbody, a.question_date, a.asker_name, a.qhelpful,a.qreported, a.qid
        LIMIT $2 OFFSET $3`,
       //  values: [product_id, count, offset]
-      values: [product_id,5, 0]
-
+      values: [product_id,count, offset]
     };
 
 

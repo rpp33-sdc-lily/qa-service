@@ -4,7 +4,7 @@ var db = process.env.NODE_ENV === 'production' ? 'qa' : 'qatestdb';
 var db_password = require('./db_config.js').DB_PASSWORD;
 console.log('db selected: ', db);
 var pool;
-var db_ip = '18.207.167.52';
+var db_ip = '54.91.180.217';
 if (db === 'qa') {
   pool = new Pool({
     user: 'postgres',

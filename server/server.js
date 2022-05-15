@@ -12,7 +12,7 @@ app.use(
 app.get('/', (req, res) => {
   res.status(200).json({'info': 'Node.js, Express, and Postgres API'});
 });
-var loaderioKey = 'loaderio-2dc2482d72faedd08ff1aa4867b58e90';
+var loaderioKey = 'loaderio-7527b2b0963e50b8160e8c29e2626f4f';
 app.get(`/${loaderioKey}/`, (req, res) => {
   console.log(`sent ${loaderioKey}  back`);
   res.status(200).send(loaderioKey);

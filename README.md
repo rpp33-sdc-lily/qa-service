@@ -5,8 +5,6 @@ This server is responsible for all CRUD operations of the API of the Questions a
 ![image](https://user-images.githubusercontent.com/8378155/176363058-29786834-6019-4d75-bcd1-1d0cf028038c.png)
  * please note. It says 2600 over a minute but the option for selecting 2600 requests per second was selected.
 
-# Usage
-  - To use this service, please clone and npm install and then run npm start
 # Routes
 
 #### Get questions for a product
